@@ -1,30 +1,27 @@
 class ApplicationsController < ApplicationController
-  before_action :set_application, only: [:show, :update, :destroy]
+  before_action :set_item, only: [:show, :update, :destroy]
+  skip_before_action 
 
-  # GET /applications
+  # GET /items
   def index
-    @applications = Application.all
-
+    @applications = @current_user.applications.all
+    # byebug
     render json: @applications
   end
 
-  # GET /applications/1
+  # GET /items/1
   def show
+    render json: @applications
+  end
+
+  # POST /items
+  def create
+    @application = @current_user.applications.create!(item_params)
+    # byebug
     render json: @application
   end
 
-  # POST /applications
-  def create
-    @application = Application.new(application_params)
-
-    if @application.save
-      render json: @application, status: :created, location: @application
-    else
-      render json: @application.errors, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /applications/1
+  # PATCH/PUT /items/1
   def update
     if @application.update(application_params)
       render json: @application
@@ -33,7 +30,7 @@ class ApplicationsController < ApplicationController
     end
   end
 
-  # DELETE /applications/1
+  # DELETE /items/1
   def destroy
     @application.destroy
   end
@@ -46,6 +43,7 @@ class ApplicationsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def application_params
-      params.require(:application).permit(:company, :position, :contact, :deadline, :sentn, :response, :offer, :accepted, :notes, :user_id)
+      params.permit(:company, :position, :contact, :deadline, :sentn, :response, :offer, :accepted, :notes,  :id, :user_id, :user)
     end
 end
+
